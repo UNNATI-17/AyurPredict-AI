@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AyurPredict - AI-Driven Herbal Medicine Recommendation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+
+    <div id="landingPage">
+        <section class="hero-section">
+            <div class="container">
+                <i class="fas fa-leaf logo-icon"></i>
+                <h1 class="display-4 fade-in-up" style="animation-delay: 0.2s;">Welcome to AyurPredict</h1>
+                <p class="lead col-md-8 mx-auto fade-in-up" style="animation-delay: 0.4s;">
+                    Bridging ancient Ayurvedic wisdom with modern data science to provide safe and effective herbal recommendations.
+                </p>
+                <button class="btn btn-primary btn-lg mt-3 fade-in-up" style="animation-delay: 0.6s;" onclick="showModeSelection()">
+                    Get Started
+                </button>
+            </div>
+        </section>
+
+        <section class="container my-5 py-5">
+            <h2 class="text-center mb-5 fade-in-up" style="animation-delay: 0.8s;">Key Features</h2>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="highlight-card fade-in-up" style="animation-delay: 1.0s;">
+                        <i class="fas fa-heartbeat highlight-icon"></i>
+                        <h5>Symptom Analysis</h5>
+                        <p>Get herb recommendations based on your symptoms.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="highlight-card fade-in-up" style="animation-delay: 1.2s;">
+                        <i class="fas fa-microscope highlight-icon"></i>
+                        <h5>Herb Analysis</h5>
+                        <p>Explore the scientific profile of Ayurvedic herbs.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="highlight-card fade-in-up" style="animation-delay: 1.4s;">
+                        <i class="fas fa-brain highlight-icon"></i>
+                        <h5>ML-Powered</h5>
+                        <p>Leverages machine learning for accurate predictions.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="highlight-card fade-in-up" style="animation-delay: 1.6s;">
+                        <i class="fas fa-shield-alt highlight-icon"></i>
+                        <h5>Safety First</h5>
+                        <p>Identifies potential risks and drug interactions.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="modeSelection" class="mode-selection-overlay d-none">
+        <div class="container">
+            <div class="card col-lg-8 mx-auto p-5">
+                <h2 class="text-center mb-4">Choose Your Path</h2>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="mode-card user-mode" onclick="redirectToMode('user')">
+                            <i class="fas fa-user-injured fa-2x mb-3 text-success"></i>
+                            <h3>For Users</h3>
+                            <p>Get personalized herbal recommendations.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mode-card researcher-mode" onclick="redirectToMode('researcher')">
+                            <i class="fas fa-flask fa-2x mb-3 text-primary"></i>
+                            <h3>For Researchers</h3>
+                            <p>Analyze herbal compounds and their effects.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
