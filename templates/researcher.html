@@ -9,57 +9,48 @@
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg">
+    <!-- 🌿 Navbar -->
+    <nav class="navbar navbar-expand-lg bg-success navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="/"><i class="fas fa-leaf me-2"></i>AyurPredict</a>
         </div>
     </nav>
 
+    <!-- 🔬 Researcher Interface -->
     <div class="container py-5 researcher-page">
         <div class="row justify-content-center">
             <div class="col-lg-9">
-                <div class="interface-card">
-                    <div class="page-header">
-                        <i class="fas fa-microscope page-icon"></i>
-                        <h2 class="mt-3">Herb Analysis Dashboard</h2>
+                <div class="interface-card shadow-lg p-4 rounded-4 bg-light">
+                    <div class="page-header text-center">
+                        <i class="fas fa-microscope page-icon fa-3x text-success"></i>
+                        <h2 class="mt-3 fw-bold">Herb Analysis Dashboard</h2>
                         <p class="text-muted">Analyze herbs to predict their biological effects and protein targets.</p>
                     </div>
 
+                    <!-- Herb Input Form -->
                     <form id="herbForm">
                         <div class="mb-4 herb-input-container position-relative">
                             <label for="herbName" class="form-label fw-bold">Enter Herb Name</label>
                             <input type="text" class="form-control" id="herbName" placeholder="e.g., Ashwagandha" autocomplete="off">
                             <div id="herbSuggestions" class="suggestions-dropdown"></div>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Analyze Herb</button>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-search me-2"></i>Analyze Herb
+                        </button>
                     </form>
 
+                    <!-- ⏳ Loading Animation -->
                     <div id="analysisLoading" class="analysis-loading text-center py-5 d-none">
-                        <div class="dna-loader">
-                            <div class="dna-strand"></div>
-                            <div class="dna-strand"></div>
-                            <div class="dna-strand"></div>
-                        </div>
-                        <h5 class="mt-4">Processing Herb Analysis</h5>
+                        <div class="spinner-border text-success" role="status"></div>
+                        <h5 class="mt-4">Processing Herb Analysis...</h5>
                         <p class="text-muted">Extracting phytochemicals and predicting molecular interactions...</p>
-                        <div class="analysis-steps mt-4">
-                            <div class="step-item active">
-                                <i class="fas fa-check-circle"></i> Retrieving compound data
-                            </div>
-                            <div class="step-item">
-                                <i class="fas fa-circle"></i> Computing molecular descriptors
-                            </div>
-                            <div class="step-item">
-                                <i class="fas fa-circle"></i> Predicting protein targets
-                            </div>
-                            <div class="step-item">
-                                <i class="fas fa-circle"></i> Mapping biological pathways
-                            </div>
-                        </div>
                     </div>
 
+                    <!-- 🧬 Results Section -->
                     <div id="analysisResults" class="mt-5 d-none">
-                        <h3 class="mb-4">Analysis for <span id="analyzedHerbName" style="color: var(--accent-color-blue);"></span></h3>
+                        <h3 class="mb-4 text-center">
+                            🔍 Analysis for <span id="analyzedHerbName" class="text-success"></span>
+                        </h3>
                         <div id="analysisContent" class="row g-4"></div>
                     </div>
                 </div>
@@ -67,7 +58,129 @@
         </div>
     </div>
 
+    <!-- JS Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/researcher.js') }}"></script>
+
+    <!-- 🔗 Researcher Script -->
+    <script>
+        const herbForm = document.getElementById("herbForm");
+        const herbInput = document.getElementById("herbName");
+        const loadingState = document.getElementById("analysisLoading");
+        const resultsContainer = document.getElementById("analysisResults");
+        const resultsContent = document.getElementById("analysisContent");
+        const analyzedHerbName = document.getElementById("analyzedHerbName");
+
+        // Submit herb for analysis
+        herbForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const herb = herbInput.value.trim();
+            if (!herb) return alert("Please enter a herb name!");
+
+            // Show loading
+            loadingState.classList.remove("d-none");
+            resultsContainer.classList.add("d-none");
+            resultsContent.innerHTML = "";
+
+            try {
+                const response = await fetch("/api/analyze-herb", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ herb })
+                });
+
+                const data = await response.json();
+                loadingState.classList.add("d-none");
+
+                if (data.error) {
+                    resultsContainer.classList.remove("d-none");
+                    resultsContent.innerHTML = `<div class='alert alert-danger text-center'>${data.error}</div>`;
+                    return;
+                }
+
+                // ✅ Display analysis data
+                analyzedHerbName.textContent = herb;
+                resultsContainer.classList.remove("d-none");
+
+                let targetsHTML = "";
+                if (data.predicted_targets && data.predicted_targets.length > 0) {
+                    targetsHTML = `
+                        <div class="col-md-6">
+                            <div class="card h-100 shadow-sm border-0">
+                                <div class="card-body">
+                                    <h5 class="card-title text-success">🎯 Predicted Targets</h5>
+                                    <ul class="list-unstyled mb-0">
+                                        ${data.predicted_targets.map(t => `
+                                            <li>${t[0]} <span class="text-muted">(${(t[1] * 100).toFixed(1)}%)</span></li>
+                                        `).join("")}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>`;
+                }
+
+                let compoundsHTML = "";
+                if (data.compounds && data.compounds.length > 0) {
+                    compoundsHTML = `
+                        <div class="col-md-6">
+                            <div class="card h-100 shadow-sm border-0">
+                                <div class="card-body">
+                                    <h5 class="card-title text-success">🧪 Key Compounds</h5>
+                                    <ul class="list-unstyled mb-0">
+                                        ${data.compounds.map(c => `<li>${c}</li>`).join("")}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>`;
+                }
+
+                let pathwaysHTML = "";
+                if (data.pathways && data.pathways.length > 0) {
+                    pathwaysHTML = `
+                        <div class="col-md-6">
+                            <div class="card h-100 shadow-sm border-0">
+                                <div class="card-body">
+                                    <h5 class="card-title text-success">🧬 Pathways</h5>
+                                    <ul class="list-unstyled mb-0">
+                                        ${data.pathways.map(p => `<li>${p}</li>`).join("")}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>`;
+                }
+
+                let effectsHTML = "";
+                if (data.therapeutic_effects && data.therapeutic_effects.length > 0) {
+                    effectsHTML = `
+                        <div class="col-md-6">
+                            <div class="card h-100 shadow-sm border-0">
+                                <div class="card-body">
+                                    <h5 class="card-title text-success">💊 Therapeutic Effects</h5>
+                                    <ul class="list-unstyled mb-0">
+                                        ${data.therapeutic_effects.map(e => `<li>${e}</li>`).join("")}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>`;
+                }
+
+                const safetyHTML = `
+                    <div class="col-md-12">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-body">
+                                <h5 class="card-title text-danger">⚠️ Safety Information</h5>
+                                <p class="mb-0">${data.safety}</p>
+                            </div>
+                        </div>
+                    </div>`;
+
+                resultsContent.innerHTML = targetsHTML + compoundsHTML + pathwaysHTML + effectsHTML + safetyHTML;
+
+            } catch (error) {
+                loadingState.classList.add("d-none");
+                resultsContainer.classList.remove("d-none");
+                resultsContent.innerHTML = `<div class='alert alert-danger text-center'>Server error: ${error}</div>`;
+            }
+        });
+    </script>
 </body>
 </html>

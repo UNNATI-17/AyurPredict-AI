@@ -9,54 +9,131 @@
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg">
+    <!-- 🌿 Navbar -->
+    <nav class="navbar navbar-expand-lg bg-success navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="/"><i class="fas fa-leaf me-2"></i>AyurPredict</a>
         </div>
     </nav>
 
+    <!-- 💊 Symptom Input Section -->
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <div class="interface-card">
-                    <div class="page-header">
-                        <i class="fas fa-heartbeat page-icon"></i>
-                        <h2 class="mt-3">Symptom Checker</h2>
+                <div class="interface-card shadow-lg p-4 rounded-4 bg-light">
+                    <div class="page-header text-center">
+                        <i class="fas fa-heartbeat page-icon fa-3x text-success"></i>
+                        <h2 class="mt-3 fw-bold">Symptom Checker</h2>
                         <p class="text-muted">Describe your symptoms to receive AI-driven herbal recommendations.</p>
                     </div>
 
                     <form id="symptomForm">
                         <div class="mb-4">
                             <label for="symptoms" class="form-label fw-bold">Enter Your Symptoms</label>
-                            <textarea class="form-control" id="symptoms" rows="5" placeholder="e.g., Stress, joint pain, insomnia..."></textarea>
+                            <textarea class="form-control" id="symptoms" rows="4" placeholder="e.g., stress, fatigue, insomnia..."></textarea>
                         </div>
+
                         <div class="mb-4">
-                            <label class="form-label">Quick Select:</label>
-                            <div class="symptom-tags">
-                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addSymptom('stress')">Stress</button>
-                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addSymptom('inflammation')">Inflammation</button>
-                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addSymptom('anxiety')">Anxiety</button>
-                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addSymptom('insomnia')">Insomnia</button>
+                            <label class="form-label fw-bold">Quick Select:</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="button" class="btn btn-outline-success btn-sm" onclick="addSymptom('stress')">Stress</button>
+                                <button type="button" class="btn btn-outline-success btn-sm" onclick="addSymptom('inflammation')">Inflammation</button>
+                                <button type="button" class="btn btn-outline-success btn-sm" onclick="addSymptom('anxiety')">Anxiety</button>
+                                <button type="button" class="btn btn-outline-success btn-sm" onclick="addSymptom('insomnia')">Insomnia</button>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-lg w-100">Get Recommendations</button>
+
+                        <button type="submit" class="btn btn-success btn-lg w-100">
+                            <i class="fas fa-search me-2"></i>Get Recommendations
+                        </button>
                     </form>
 
+                    <!-- ⏳ Loading State -->
                     <div id="loadingState" class="text-center py-5 d-none">
-                        <div class="spinner-border text-primary" role="status"></div>
+                        <div class="spinner-border text-success" role="status"></div>
                         <p class="mt-3">Analyzing your symptoms...</p>
                     </div>
 
+                    <!-- 🌱 Results -->
                     <div id="resultsContainer" class="mt-5 d-none">
-                        <h3 class="mb-4">Recommended Herbs</h3>
-                        <div id="resultsContent"></div>
+                        <h3 class="mb-4 text-center">🌿 Recommended Herbs</h3>
+                        <div id="resultsContent" class="row g-3"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- JS Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/user.js') }}"></script>
+
+    <!-- 🔗 Script -->
+    <script>
+        const form = document.getElementById("symptomForm");
+        const loadingState = document.getElementById("loadingState");
+        const resultsContainer = document.getElementById("resultsContainer");
+        const resultsContent = document.getElementById("resultsContent");
+
+        // Add symptom quickly to text area
+        function addSymptom(symptom) {
+            const textarea = document.getElementById("symptoms");
+            if (!textarea.value.includes(symptom)) {
+                textarea.value += (textarea.value ? ', ' : '') + symptom;
+            }
+        }
+
+        // Submit form
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const symptoms = document.getElementById("symptoms").value.trim();
+            if (!symptoms) return alert("Please enter a symptom!");
+
+            // Show loader
+            loadingState.classList.remove("d-none");
+            resultsContainer.classList.add("d-none");
+            resultsContent.innerHTML = "";
+
+            try {
+                const response = await fetch("/api/analyze-symptoms", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ symptoms })
+                });
+
+                const data = await response.json();
+                loadingState.classList.add("d-none");
+
+                if (data.error) {
+                    resultsContainer.classList.remove("d-none");
+                    resultsContent.innerHTML = `<div class='alert alert-danger text-center'>${data.error}</div>`;
+                    return;
+                }
+
+                // ✅ Updated for correct backend response structure
+                if (data.recommended_herbs && data.recommended_herbs.length > 0) {
+                    resultsContainer.classList.remove("d-none");
+                    resultsContent.innerHTML = data.recommended_herbs.map(herb => `
+                        <div class="col-md-6">
+                            <div class="card shadow-sm border-0 h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title text-success fw-bold">${herb.herb}</h5>
+                                    <p class="mb-2"><strong>Predicted Strength:</strong> ${herb.predicted_strength}</p>
+                                    <p class="mb-0"><strong>Risk:</strong> ${herb.risk}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join("");
+                } else {
+                    resultsContainer.classList.remove("d-none");
+                    resultsContent.innerHTML = `<div class='alert alert-warning text-center'>No recommendations found.</div>`;
+                }
+
+            } catch (error) {
+                loadingState.classList.add("d-none");
+                resultsContainer.classList.remove("d-none");
+                resultsContent.innerHTML = `<div class='alert alert-danger text-center'>Server error: ${error}</div>`;
+            }
+        });
+    </script>
 </body>
 </html>

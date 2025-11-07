@@ -1,0 +1,4 @@
+Model,R²,RMSE,Precision,Recall,F1_Score,Optimal_Precision,Prediction_Stability,Accuracy_1σ,CV_R²,Overfitting_Gap,Trustworthiness_Score
+Random Forest,0.4487,0.5489,0.5669,0.8926,0.6934,0.7018,0.3309,0.87,0.4167,0.0943,0.5572050000000001
+Gradient Boost,0.4681,0.5392,0.568,0.9036,0.6975,0.7,0.2716,0.88,0.4249,0.1716,0.5381199999999999
+XGBoost,0.4644,0.541,0.5639,0.8871,0.6895,0.701,0.2731,0.8762,0.4261,0.1674,0.537355
