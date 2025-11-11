@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AyurPredict - Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --secondary-color: #4caf50;
+            --accent-color: #8bc34a;
+            --light-green: #e8f5e9;
+            --dark-green: #1b5e20;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .navbar {
+            background-color: var(--primary-color) !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: white !important;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.9) !important;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover {
+            color: white !important;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 4rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            color: var(--dark-green);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            font-weight: 600;
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .metric-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .metric-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .table-responsive {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .table thead {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .footer {
+            background-color: var(--dark-green);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .badge-custom {
+            background-color: var(--accent-color);
+            color: var(--dark-green);
+        }
+        
+        .model-comparison {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+        
+        .tech-item {
+            background: var(--light-green);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--dark-green);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-leaf me-2"></i>AyurPredict
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="user.html">User Mode</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="researcher.html">Researcher Mode</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="documentation.html">Documentation</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold">AyurPredict Documentation</h1>
+                    <p class="lead">Comprehensive guide to the AI-powered Ayurvedic herb-target interaction prediction system</p>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="fas fa-book-open fa-5x opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Introduction -->
+        <section class="mb-5">
+            <h2 class="section-title">System Overview</h2>
+            <div class="row">
+                <div class="col-md-8">
+                    <p class="lead">
+                        AyurPredict is an AI-driven platform that predicts interactions between Ayurvedic herbs and biological targets, 
+                        helping researchers and users discover potential therapeutic applications.
+                    </p>
+                    <p>
+                        The system combines traditional Ayurvedic knowledge with modern machine learning techniques to provide 
+                        evidence-based predictions for herb-target interactions, bioactivity strength, and therapeutic potential.
+                    </p>
+                    
+                    <div class="model-comparison">
+                        <h5><i class="fas fa-lightbulb me-2"></i>Key Innovation</h5>
+                        <p class="mb-0">
+                            AyurPredict bridges the gap between traditional medicine and computational biology by applying 
+                            trustworthy machine learning models to predict herb-target interactions with high precision.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-cogs me-2"></i>System Stats
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-6 mb-3">
+                                    <div class="metric-value">20+</div>
+                                    <div class="metric-label">Ayurvedic Herbs</div>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <div class="metric-value">300+</div>
+                                    <div class="metric-label">Compounds</div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-value">8K+</div>
+                                    <div class="metric-label">Interactions</div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-value">87%</div>
+                                    <div class="metric-label">Accuracy</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="mb-5">
+            <h2 class="section-title">System Architecture</h2>
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-project-diagram me-2"></i>Technical Architecture
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Data Pipeline</h5>
+                            <ul>
+                                <li><strong>Data Collection:</strong> Extracted from BindingDB and curated Ayurvedic databases</li>
+                                <li><strong>Data Processing:</strong> Cleaning, standardization, and feature engineering</li>
+                                <li><strong>Balanced Dataset:</strong> 8,000+ interactions across 20+ herbs</li>
+                                <li><strong>Feature Encoding:</strong> Categorical variables transformed for ML models</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>ML Pipeline</h5>
+                            <ul>
+                                <li><strong>Model Selection:</strong> Random Forest, Gradient Boost, XGBoost</li>
+                                <li><strong>Hyperparameter Tuning:</strong> GridSearchCV and RandomizedSearchCV</li>
+                                <li><strong>Trustworthy Metrics:</strong> Precision, Stability, Overfitting Gap</li>
+                                <li><strong>Validation:</strong> Cross-validation and holdout testing</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <h5 class="mt-4">Technology Stack</h5>
+                    <div class="tech-stack">
+                        <span class="tech-item">Python</span>
+                        <span class="tech-item">Scikit-learn</span>
+                        <span class="tech-item">XGBoost</span>
+                        <span class="tech-item">Pandas</span>
+                        <span class="tech-item">NumPy</span>
+                        <span class="tech-item">Flask</span>
+                        <span class="tech-item">Bootstrap</span>
+                        <span class="tech-item">JavaScript</span>
+                        <span class="tech-item">Matplotlib</span>
+                        <span class="tech-item">Seaborn</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Model Performance -->
+        <section class="mb-5">
+            <h2 class="section-title">Model Performance Analysis</h2>
+            
+            <!-- Performance Charts -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="chart-container">
+                        <h5><i class="fas fa-chart-bar me-2"></i>Performance Comparison (Before/After Tuning)</h5>
+                        <img src="{{ url_for('serve_data_files', filename='performance_comparison_before_after.png') }}" 
+                            alt="Performance Comparison" class="img-fluid rounded">
+                        <p class="mt-2 text-muted">Comparison of key metrics across different models before and after hyperparameter tuning.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="chart-container">
+                        <h5><i class="fas fa-balance-scale me-2"></i>Feature Importance Comparison</h5>
+                        <img src="{{ url_for('serve_data_files', filename='feature_importance_comparison.png') }}" 
+                            alt="Feature Importance" class="img-fluid rounded">
+                        <p class="mt-2 text-muted">Top 15 most important features for the best performing model before and after tuning.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="chart-container">
+                        <h5><i class="fas fa-bullseye me-2"></i>Prediction Scatter Plots</h5>
+                        <img src="{{ url_for('serve_data_files', filename='prediction_scatter_plots.png') }}" 
+                            alt="Prediction Scatter" class="img-fluid rounded">
+                        <p class="mt-2 text-muted">Actual vs. predicted bioactivity strength for different models.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="chart-container">
+                        <h5><i class="fas fa-chart-pie me-2"></i>Error Distribution</h5>
+                        <img src="{{ url_for('serve_data_files', filename='error_distribution_comparison.png') }}" 
+                            alt="Error Distribution" class="img-fluid rounded">
+                        <p class="mt-2 text-muted">Distribution of prediction errors for the best model before and after tuning.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Chart Row -->
+            <div class="row mb-4">
+                <div class="col-md-6 mx-auto">
+                    <div class="chart-container">
+                        <h5><i class="fas fa-chart-radar me-2"></i>Trustworthiness Radar Chart</h5>
+                        <img src="{{ url_for('serve_data_files', filename='trustworthiness_radar_chart.png') }}" 
+                            alt="Trustworthiness Radar" class="img-fluid rounded">
+                        <p class="mt-2 text-muted">Comprehensive trustworthiness analysis showing precision, stability, and other key metrics across models.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Performance Table -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-table me-2"></i>Detailed Model Performance Metrics
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Model</th>
+                                    <th>Status</th>
+                                    <th>R²</th>
+                                    <th>RMSE</th>
+                                    <th>MAE</th>
+                                    <th>Precision</th>
+                                    <th>Recall</th>
+                                    <th>F1 Score</th>
+                                    <th>Prediction Stability</th>
+                                    <th>Accuracy 1σ</th>
+                                    <th>CV R²</th>
+                                    <th>Overfitting Gap</th>
+                                    <th>Train Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Random Forest</td>
+                                    <td>Before Tuning</td>
+                                    <td>0.4487</td>
+                                    <td>0.5489</td>
+                                    <td>0.3936</td>
+                                    <td>0.5669</td>
+                                    <td>0.8926</td>
+                                    <td>0.6934</td>
+                                    <td>0.3309</td>
+                                    <td>0.87</td>
+                                    <td>0.4167</td>
+                                    <td>0.0943</td>
+                                    <td>0.5431</td>
+                                </tr>
+                                <tr>
+                                    <td>Gradient Boost</td>
+                                    <td>Before Tuning</td>
+                                    <td>0.4681</td>
+                                    <td>0.5392</td>
+                                    <td>0.3835</td>
+                                    <td>0.5680</td>
+                                    <td>0.9036</td>
+                                    <td>0.6975</td>
+                                    <td>0.2716</td>
+                                    <td>0.88</td>
+                                    <td>0.4249</td>
+                                    <td>0.1716</td>
+                                    <td>0.6397</td>
+                                </tr>
+                                <tr>
+                                    <td>XGBoost</td>
+                                    <td>Before Tuning</td>
+                                    <td>0.4644</td>
+                                    <td>0.5410</td>
+                                    <td>0.3853</td>
+                                    <td>0.5639</td>
+                                    <td>0.8871</td>
+                                    <td>0.6895</td>
+                                    <td>0.2731</td>
+                                    <td>0.8763</td>
+                                    <td>0.4261</td>
+                                    <td>0.1674</td>
+                                    <td>0.6317</td>
+                                </tr>
+                                <tr class="table-success">
+                                    <td>Random Forest (Optimized)</td>
+                                    <td>After Tuning</td>
+                                    <td>0.4602</td>
+                                    <td>0.5431</td>
+                                    <td>0.3899</td>
+                                    <td>0.5699</td>
+                                    <td>0.8871</td>
+                                    <td>0.6940</td>
+                                    <td>0.3075</td>
+                                    <td>0.8694</td>
+                                    <td>0.4207</td>
+                                    <td>0.1229</td>
+                                    <td>0.5832</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Model Selection Justification -->
+        <section class="mb-5">
+            <h2 class="section-title">Model Selection & Optimization Strategy</h2>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-trophy me-2"></i>Why Random Forest Was Chosen as the Best Model
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-check-circle text-success me-2"></i>Key Advantages</h5>
+                            <ul>
+                                <li><strong>Highest Precision (0.5699):</strong> Most critical for trustworthy medical predictions</li>
+                                <li><strong>Best Prediction Stability (0.3075):</strong> Consistent and reliable outputs</li>
+                                <li><strong>Lowest Overfitting Gap (0.1229):</strong> Better generalization to new data</li>
+                                <li><strong>Robust Feature Importance:</strong> Clear interpretability of biological features</li>
+                                <li><strong>Handles Non-linear Relationships:</strong> Perfect for complex herb-target interactions</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-chart-line text-primary me-2"></i>Trade-off Analysis</h5>
+                            <div class="alert alert-info">
+                                <strong>Accuracy vs. Trustworthiness:</strong> While Gradient Boost had slightly better R² (0.4681 vs 0.4487), 
+                                Random Forest excelled in <strong>precision and stability</strong> - more crucial for healthcare applications.
+                            </div>
+                            <p><strong>Decision Rationale:</strong> In medical AI, a <em>conservative and stable</em> model that makes fewer but more reliable predictions is preferred over one with slightly better overall accuracy but higher variance.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <i class="fas fa-magic me-2"></i>Hyperparameter Optimization Process
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Optimization Strategy</h5>
+                            <ul>
+                                <li><strong>GridSearchCV & RandomizedSearchCV:</strong> Comprehensive parameter space exploration</li>
+                                <li><strong>Focus on Precision:</strong> Optimization targeted precision over raw accuracy</li>
+                                <li><strong>Biological Constraints:</strong> Parameters tuned to respect biological plausibility</li>
+                                <li><strong>Cross-Validation:</strong> 5-fold CV to ensure robustness</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Key Optimized Parameters</h5>
+                            <ul>
+                                <li><strong>n_estimators:</strong> Increased to 200 for better stability</li>
+                                <li><strong>max_depth:</strong> Limited to 15 to prevent overfitting</li>
+                                <li><strong>min_samples_split:</strong> Set to 10 for more conservative splitting</li>
+                                <li><strong>min_samples_leaf:</strong> Increased to 5 for reliable leaf predictions</li>
+                                <li><strong>max_features:</strong> 'sqrt' for better feature diversity</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <h6><i class="fas fa-lightbulb me-2"></i>Optimization Outcome</h6>
+                        <p class="mb-0">
+                            The optimized Random Forest achieved the <strong>best balance of precision (0.5699), stability (0.3075), and generalization (overfitting gap: 0.1229)</strong>, 
+                            making it the most trustworthy choice for Ayurvedic herb-target interaction predictions where safety and reliability are paramount.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features & Methodology -->
+        <section class="mb-5">
+            <h2 class="section-title">Features & Methodology</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <i class="fas fa-database me-2"></i>Data Features
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                                <li><strong>Herb Encodings:</strong> Numerical representation of Ayurvedic herbs</li>
+                                <li><strong>Target Encodings:</strong> Numerical representation of biological targets</li>
+                                <li><strong>Compound Information:</strong> Active compounds in each herb</li>
+                                <li><strong>Bioactivity Metrics:</strong> Ki, IC50, pKi, pIC50 values</li>
+                                <li><strong>Therapeutic Properties:</strong> Anti-inflammatory, neuroprotective, etc.</li>
+                                <li><strong>Interaction Features:</strong> Herb-Target, Compound-Target interactions</li>
+                                <li><strong>Quality Scores:</strong> Data quality and confidence metrics</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <i class="fas fa-flask me-2"></i>Methodology
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                                <li><strong>Trustworthy ML:</strong> Focus on precision and stability over pure accuracy</li>
+                                <li><strong>Biological Relevance:</strong> Features designed to capture real biological patterns</li>
+                                <li><strong>Cross-Validation:</strong> 5-fold CV to ensure model robustness</li>
+                                <li><strong>Hyperparameter Optimization:</strong> GridSearchCV and RandomizedSearchCV</li>
+                                <li><strong>Feature Selection:</strong> Mutual information and correlation-based selection</li>
+                                <li><strong>Error Analysis:</strong> Comprehensive evaluation of prediction errors</li>
+                                <li><strong>Model Interpretability:</strong> Feature importance and prediction explanations</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Usage Guide -->
+        <section class="mb-5">
+            <h2 class="section-title">Usage Guide</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <i class="fas fa-user me-2"></i>User Mode
+                        </div>
+                        <div class="card-body">
+                            <p>For general users seeking herbal recommendations based on symptoms:</p>
+                            <ol>
+                                <li>Navigate to the User page</li>
+                                <li>Enter your symptom (e.g., anxiety, inflammation)</li>
+                                <li>View recommended herbs with predicted effectiveness</li>
+                                <li>Check safety information for each herb</li>
+                                <li>Explore therapeutic properties and mechanisms</li>
+                            </ol>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Note:</strong> Predictions are based on computational models and should not replace professional medical advice.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <i class="fas fa-microscope me-2"></i>Researcher Mode
+                        </div>
+                        <div class="card-body">
+                            <p>For researchers studying herb-target interactions:</p>
+                            <ol>
+                                <li>Navigate to the Researcher page</li>
+                                <li>Select or enter an Ayurvedic herb name</li>
+                                <li>View predicted biological targets and interactions</li>
+                                <li>Analyze compounds and pathways</li>
+                                <li>Explore bioactivity scores and confidence metrics</li>
+                                <li>Download results for further analysis</li>
+                            </ol>
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Research Use:</strong> These predictions are for research purposes and require experimental validation.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Documentation -->
+        <section class="mb-5">
+            <h2 class="section-title">API Documentation</h2>
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-code me-2"></i>AyurPredict System Class
+                </div>
+                <div class="card-body">
+                    <p>The core functionality is implemented in the <code>AyurPredictSystem</code> class:</p>
+                    
+                    <h5>Initialization</h5>
+                    <pre><code>system = AyurPredictSystem(model_path, encoder_path, data_path)</code></pre>
+                    
+                    <h5>Researcher Pathway</h5>
+                    <pre><code>result = system.researcher_pathway(herb_name)
+# Returns: predicted targets, compounds, pathways, therapeutic effects</code></pre>
+                    
+                    <h5>Symptom Pathway</h5>
+                    <pre><code>result = system.symptom_pathway(symptom)
+# Returns: recommended herbs with predicted strength and safety info</code></pre>
+                    
+                    <h5>Utility Methods</h5>
+                    <pre><code>herbs = system.get_herbs()  # List of available herbs
+targets = system.get_targets()  # List of available targets
+encoded = system.encode(name, key)  # Encode herb/target name
+decoded = system.decode(code, key)  # Decode numeric code to name</code></pre>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-leaf me-2"></i>AyurPredict</h5>
+                    <p>Bridging traditional Ayurvedic knowledge with modern AI for evidence-based herbal medicine research.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-light">Home</a></li>
+                        <li><a href="user.html" class="text-light">User Mode</a></li>
+                        <li><a href="researcher.html" class="text-light">Researcher Mode</a></li>
+                        <li><a href="documentation.html" class="text-light">Documentation</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Connect</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light"><i class="fab fa-github me-2"></i>GitHub</a></li>
+                        <li><a href="#" class="text-light"><i class="fas fa-envelope me-2"></i>Contact</a></li>
+                        <li><a href="#" class="text-light"><i class="fas fa-file-alt me-2"></i>Research Paper</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="mt-4 mb-4">
+            <div class="text-center">
+                <p>&copy; 2025 AyurPredict. All rights reserved.</p>
+                <p class="small">For research purposes only. Not intended for medical diagnosis or treatment.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -6,11 +6,323 @@
     <title>AyurPredict - AI-Driven Herbal Medicine Recommendation</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <style>
+        /* Custom Styles */
+        :root {
+            --primary-green: #2e7d32;
+            --light-green: #4caf50;
+            --dark-green: #1b5e20;
+            --gold: #ffd700;
+            --cream: #faf3e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8fff9 0%, #e8f5e8 100%);
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+        }
+
+        .docs-btn {
+            background: linear-gradient(135deg, var(--gold), #ffeb3b);
+            border: none;
+            color: var(--dark-green);
+            font-weight: 600;
+        }
+
+        .docs-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.9), rgba(27, 94, 32, 0.9)),
+                        url('https://images.unsplash.com/photo-1542736667-069246bdbc6d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 120px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .logo-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            color: var(--gold);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .hero-section h1 {
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero-section .lead {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold), #ffeb3b);
+            border: none;
+            color: var(--dark-green);
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Highlight Cards */
+        .highlight-card {
+            background: white;
+            padding: 2.5rem 1.5rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(76, 175, 80, 0.1);
+            height: 100%;
+        }
+
+        .highlight-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .highlight-icon {
+            font-size: 3rem;
+            color: var(--primary-green);
+            margin-bottom: 1.5rem;
+        }
+
+        .highlight-card h5 {
+            color: var(--dark-green);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        /* Mode Selection */
+        .mode-selection-overlay {
+            background: rgba(0,0,0,0.8);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1050;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mode-card {
+            background: white;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            height: 100%;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-green);
+        }
+
+        .user-mode:hover {
+            background: linear-gradient(135deg, #f8fff9, #e8f5e8);
+        }
+
+        .researcher-mode:hover {
+            background: linear-gradient(135deg, #f0f8ff, #e3f2fd);
+        }
+
+        .mode-card h3 {
+            color: var(--dark-green);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 100px 0;
+            background: white;
+        }
+
+        .section-title {
+            color: var(--dark-green);
+            font-weight: 700;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-green), var(--gold));
+            border-radius: 2px;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            color: white;
+            padding: 80px 0;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, var(--dark-green), #0d3b13);
+            color: white;
+            padding: 60px 0 30px;
+        }
+
+        .footer h5 {
+            color: var(--gold);
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links a {
+            color: #b2dfdb;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--gold);
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--gold);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+            margin-top: 40px;
+        }
+
+        /* Animations */
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 80px 0;
+            }
+            
+            .hero-section h1 {
+                font-size: 2.5rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
 
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-leaf me-2"></i>AyurPredict
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="documentation.html">
+                            <i class="fas fa-book me-1"></i>Documentation
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Landing Page Content -->
     <div id="landingPage">
+        <!-- Hero Section -->
         <section class="hero-section">
             <div class="container">
                 <i class="fas fa-leaf logo-icon"></i>
@@ -19,63 +331,131 @@
                     Bridging ancient Ayurvedic wisdom with modern data science to provide safe and effective herbal recommendations.
                 </p>
                 <button class="btn btn-primary btn-lg mt-3 fade-in-up" style="animation-delay: 0.6s;" onclick="showModeSelection()">
-                    Get Started
+                    Get Started <i class="fas fa-arrow-right ms-2"></i>
                 </button>
             </div>
         </section>
 
-        <section class="container my-5 py-5">
-            <h2 class="text-center mb-5 fade-in-up" style="animation-delay: 0.8s;">Key Features</h2>
-            <div class="row g-4">
-                <div class="col-md-6 col-lg-3">
-                    <div class="highlight-card fade-in-up" style="animation-delay: 1.0s;">
-                        <i class="fas fa-heartbeat highlight-icon"></i>
-                        <h5>Symptom Analysis</h5>
-                        <p>Get herb recommendations based on your symptoms.</p>
+        <!-- Features Section -->
+        <section id="features" class="features-section">
+            <div class="container">
+                <h2 class="text-center section-title fade-in-up">Key Features</h2>
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="highlight-card fade-in-up" style="animation-delay: 0.2s;">
+                            <i class="fas fa-heartbeat highlight-icon"></i>
+                            <h5>Symptom Analysis</h5>
+                            <p>AI-powered analysis of symptoms to recommend personalized herbal solutions.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="highlight-card fade-in-up" style="animation-delay: 0.4s;">
+                            <i class="fas fa-microscope highlight-icon"></i>
+                            <h5>Scientific Research</h5>
+                            <p>Deep analysis of herbs, compounds, and biological pathways.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="highlight-card fade-in-up" style="animation-delay: 0.6s;">
+                            <i class="fas fa-brain highlight-icon"></i>
+                            <h5>ML-Powered Insights</h5>
+                            <p>Advanced machine learning models trained on Ayurvedic datasets.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="highlight-card fade-in-up" style="animation-delay: 0.8s;">
+                            <i class="fas fa-shield-alt highlight-icon"></i>
+                            <h5>Safety First</h5>
+                            <p>Comprehensive safety profiles and interaction warnings.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="highlight-card fade-in-up" style="animation-delay: 1.2s;">
-                        <i class="fas fa-microscope highlight-icon"></i>
-                        <h5>Herb Analysis</h5>
-                        <p>Explore the scientific profile of Ayurvedic herbs.</p>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <div class="container">
+                <div class="row text-center">
+                    <div class="col-md-3 col-6 mb-4">
+                        <div class="stat-number">20+</div>
+                        <div class="stat-label">Ayurvedic Herbs</div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-4">
+                        <div class="stat-number">2,847+</div>
+                        <div class="stat-label">Molecular Interactions</div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-4">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Symptom Categories</div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-4">
+                        <div class="stat-number">85%</div>
+                        <div class="stat-label">Accuracy Rate</div>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="highlight-card fade-in-up" style="animation-delay: 1.4s;">
-                        <i class="fas fa-brain highlight-icon"></i>
-                        <h5>ML-Powered</h5>
-                        <p>Leverages machine learning for accurate predictions.</p>
-                    </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="container my-5 py-5">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h2 class="section-title">About AyurPredict</h2>
+                    <p class="lead">
+                        AyurPredict combines the ancient wisdom of Ayurveda with cutting-edge artificial intelligence 
+                        to revolutionize herbal medicine recommendations.
+                    </p>
+                    <p>
+                        Our platform analyzes thousands of molecular interactions, traditional knowledge, 
+                        and modern research to provide scientifically-backed herbal solutions.
+                    </p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i> Data-driven recommendations</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Safety validation</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Continuous learning</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Research-backed insights</li>
+                    </ul>
                 </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="highlight-card fade-in-up" style="animation-delay: 1.6s;">
-                        <i class="fas fa-shield-alt highlight-icon"></i>
-                        <h5>Safety First</h5>
-                        <p>Identifies potential risks and drug interactions.</p>
-                    </div>
+                <div class="col-lg-6">
+                    <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+                         alt="Ayurvedic Herbs" class="img-fluid rounded-3 shadow">
                 </div>
             </div>
         </section>
     </div>
 
+    <!-- Mode Selection Overlay -->
     <div id="modeSelection" class="mode-selection-overlay d-none">
         <div class="container">
-            <div class="card col-lg-8 mx-auto p-5">
-                <h2 class="text-center mb-4">Choose Your Path</h2>
+            <div class="card col-lg-8 mx-auto p-5 border-0 shadow-lg">
+                <button type="button" class="btn-close position-absolute top-0 end-0 m-3" onclick="hideModeSelection()"></button>
+                <h2 class="text-center mb-4 text-dark">Choose Your Path</h2>
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div class="mode-card user-mode" onclick="redirectToMode('user')">
-                            <i class="fas fa-user-injured fa-2x mb-3 text-success"></i>
-                            <h3>For Users</h3>
-                            <p>Get personalized herbal recommendations.</p>
+                            <i class="fas fa-user-injured fa-3x mb-3 text-success"></i>
+                            <h3>User Mode</h3>
+                            <p class="text-muted">Get personalized herbal recommendations based on your symptoms and health profile.</p>
+                            <div class="mt-3">
+                                <small class="text-success">
+                                    <i class="fas fa-arrow-right me-1"></i>
+                                    Symptom-based analysis
+                                </small>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mode-card researcher-mode" onclick="redirectToMode('researcher')">
-                            <i class="fas fa-flask fa-2x mb-3 text-primary"></i>
-                            <h3>For Researchers</h3>
-                            <p>Analyze herbal compounds and their effects.</p>
+                            <i class="fas fa-flask fa-3x mb-3 text-primary"></i>
+                            <h3>Researcher Mode</h3>
+                            <p class="text-muted">Analyze herbs, compounds, biological targets, and scientific research data.</p>
+                            <div class="mt-3">
+                                <small class="text-primary">
+                                    <i class="fas fa-arrow-right me-1"></i>
+                                    Scientific analysis tools
+                                </small>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -83,7 +463,105 @@
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5><i class="fas fa-leaf me-2"></i>AyurPredict</h5>
+                    <p>Bridging ancient Ayurvedic wisdom with modern data science for better health outcomes.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-6 mb-4">
+                    <h5>Quick Links</h5>
+                    <div class="footer-links">
+                        <a href="#features">Features</a>
+                        <a href="#about">About</a>
+                        <a href="documentation.html">Documentation</a>
+                        <a href="#contact">Contact</a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6 mb-4">
+                    <h5>Resources</h5>
+                    <div class="footer-links">
+                        <a href="#">Research Papers</a>
+                        <a href="#">API Documentation</a>
+                        <a href="#">Data Sources</a>
+                        <a href="#">Methodology</a>
+                    </div>
+                </div>
+                <div class="col-lg-3 mb-4">
+                    <h5>Contact Info</h5>
+                    <div class="footer-links">
+                        <a href="mailto:info@ayurpredict.com">
+                            <i class="fas fa-envelope me-2"></i>info@ayurpredict.com
+                        </a>
+                        <a href="#">
+                            <i class="fas fa-phone me-2"></i>+1 (555) 123-4567
+                        </a>
+                        <a href="#">
+                            <i class="fas fa-map-marker-alt me-2"></i>Health Tech Park, India
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom text-center">
+                <p class="mb-0">&copy; 2024 AyurPredict. All rights reserved. | Bridging Tradition with Technology</p>
+            </div>
+        </div>
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        // Navigation functions
+        function showModeSelection() {
+            document.getElementById('modeSelection').classList.remove('d-none');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideModeSelection() {
+            document.getElementById('modeSelection').classList.add('d-none');
+            document.body.style.overflow = 'auto';
+        }
+
+        function redirectToMode(mode) {
+            if (mode === 'user') {
+                window.location.href = '/user';
+            } else if (mode === 'researcher') {
+                window.location.href = '/researcher';
+            }
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Navbar background on scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 100) {
+                navbar.style.background = 'linear-gradient(135deg, var(--primary-green), var(--dark-green))';
+                navbar.style.boxShadow = '0 2px 15px rgba(0,0,0,0.2)';
+            } else {
+                navbar.style.background = 'linear-gradient(135deg, var(--primary-green), var(--dark-green))';
+                navbar.style.boxShadow = '0 2px 15px rgba(0,0,0,0.1)';
+            }
+        });
+    </script>
 </body>
 </html>

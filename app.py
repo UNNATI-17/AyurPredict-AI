@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory
 import os
 import time
 import warnings
@@ -43,10 +43,26 @@ def user():
 def researcher():
     return render_template('researcher.html')
 
+@app.route('/documentation.html')
+def documentation():
+    return render_template('documentation.html')
+
+# ----------------------------------------------------
+# Serve Data Files (for documentation charts/images)
+# ----------------------------------------------------
+@app.route('/data/<path:filename>')
+def serve_data_files(filename):
+    """
+    Serves files from the 'data' folder located in the project root.
+    Usage in HTML:
+    <img src="{{ url_for('serve_data_files', filename='performance_comparison_before_after.png') }}">
+    """
+    data_dir = os.path.join(app.root_path, 'data')
+    return send_from_directory(data_dir, filename)
+
 # ----------------------------------------------------
 # API Routes
 # ----------------------------------------------------
-
 # 🔹 1️⃣ Symptom → Herbs (User Pathway)
 @app.route('/api/analyze-symptoms', methods=['POST'])
 def analyze_symptoms():
@@ -68,7 +84,6 @@ def analyze_symptoms():
         if not result:
             return jsonify({'error': f"No results found for symptom '{symptom}'"}), 404
 
-        # Include timing info in the response
         result['processing_time'] = elapsed
         return jsonify(result)
 
@@ -76,35 +91,46 @@ def analyze_symptoms():
         print(f"❌ Error analyzing symptom: {e}")
         return jsonify({'error': f"Internal server error: {str(e)}"}), 500
 
-
 # 🔹 2️⃣ Herb → Targets (Researcher Pathway)
 @app.route('/api/analyze-herb', methods=['POST'])
 def analyze_herb():
     if system is None:
         return jsonify({'error': 'Model not initialized properly.'}), 500
 
-    data = request.get_json()
-    herb = data.get('herb', '').strip().title()
-
-    if not herb:
-        return jsonify({'error': 'No herb provided.'}), 400
-
     try:
+        data = request.get_json()
+        herb = data.get('herb', '').strip().title()
+
+        if not herb:
+            return jsonify({'error': 'No herb provided.'}), 400
+
+        print(f"🔍 Processing herb: {herb}")
+
+        # Start timer
         start_time = time.time()
+
+        # 🔹 Call your backend system’s prediction function
         result = system.researcher_pathway(herb)
+
         elapsed = round(time.time() - start_time, 2)
         print(f"✅ Herb '{herb}' processed in {elapsed}s")
 
-        if not result:
-            return jsonify({'error': f"No data found for herb '{herb}'"}), 404
+        # 🔹 Validate result
+        if not result or not isinstance(result, dict):
+            return jsonify({'error': f"No valid prediction found for herb '{herb}'"}), 404
 
+        # 🔹 Ensure frontend-required keys exist
+        result.setdefault('targets', [])
+        result.setdefault('confidence', [])
+        result.setdefault('safety_tips', [])
+        result.setdefault('benefits', [])
         result['processing_time'] = elapsed
+
         return jsonify(result)
 
     except Exception as e:
         print(f"❌ Error analyzing herb: {e}")
         return jsonify({'error': f"Internal server error: {str(e)}"}), 500
-
 
 # ----------------------------------------------------
 # Run Flask App

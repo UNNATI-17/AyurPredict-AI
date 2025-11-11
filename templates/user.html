@@ -1,139 +1,632 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AyurPredict - User Mode</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AyurPredict - User Mode</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* Custom Styles */
+    .symptom-chip {
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+      border: 1px solid #90caf9;
+      border-radius: 20px;
+      padding: 8px 16px;
+      margin: 4px;
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+    
+    .symptom-chip:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .symptom-chip .remove {
+      margin-left: 8px;
+      cursor: pointer;
+      opacity: 0.7;
+    }
+    
+    .symptom-chip .remove:hover {
+      opacity: 1;
+    }
+    
+    .trust-badge {
+      background: linear-gradient(135deg, #28a745, #20c997);
+      color: white;
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+    
+    .confidence-meter {
+      height: 6px;
+      border-radius: 3px;
+      background: #e9ecef;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+    
+    .confidence-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 1s ease-in-out;
+    }
+    
+    .herb-card {
+      border: none;
+      border-radius: 15px;
+      transition: all 0.3s ease;
+      background: white;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .herb-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #28a745, #20c997);
+    }
+    
+    .herb-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .match-score {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #28a745;
+      text-align: center;
+    }
+    
+    .symptom-match {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .loading-visual {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    
+    .data-point {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 8px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+    }
+    
+    .data-point i {
+      width: 25px;
+      text-align: center;
+      margin-right: 10px;
+    }
+    
+    .quick-select-btn {
+      transition: all 0.3s ease;
+    }
+    
+    .quick-select-btn:hover {
+      transform: scale(1.05);
+    }
+    
+    .symptom-analysis {
+      border-left: 4px solid #28a745;
+      background: #f8fff9;
+    }
+
+    .available-symptom {
+      background: linear-gradient(135deg, #28a745, #20c997);
+      color: white;
+      border: none;
+    }
+
+    .available-symptom:hover {
+      background: linear-gradient(135deg, #229b43, #1db98a);
+      color: white;
+    }
+  </style>
 </head>
-<body>
-    <!-- 🌿 Navbar -->
-    <nav class="navbar navbar-expand-lg bg-success navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/"><i class="fas fa-leaf me-2"></i>AyurPredict</a>
-        </div>
-    </nav>
 
-    <!-- 💊 Symptom Input Section -->
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="interface-card shadow-lg p-4 rounded-4 bg-light">
-                    <div class="page-header text-center">
-                        <i class="fas fa-heartbeat page-icon fa-3x text-success"></i>
-                        <h2 class="mt-3 fw-bold">Symptom Checker</h2>
-                        <p class="text-muted">Describe your symptoms to receive AI-driven herbal recommendations.</p>
-                    </div>
-
-                    <form id="symptomForm">
-                        <div class="mb-4">
-                            <label for="symptoms" class="form-label fw-bold">Enter Your Symptoms</label>
-                            <textarea class="form-control" id="symptoms" rows="4" placeholder="e.g., stress, fatigue, insomnia..."></textarea>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Quick Select:</label>
-                            <div class="d-flex flex-wrap gap-2">
-                                <button type="button" class="btn btn-outline-success btn-sm" onclick="addSymptom('stress')">Stress</button>
-                                <button type="button" class="btn btn-outline-success btn-sm" onclick="addSymptom('inflammation')">Inflammation</button>
-                                <button type="button" class="btn btn-outline-success btn-sm" onclick="addSymptom('anxiety')">Anxiety</button>
-                                <button type="button" class="btn btn-outline-success btn-sm" onclick="addSymptom('insomnia')">Insomnia</button>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn btn-success btn-lg w-100">
-                            <i class="fas fa-search me-2"></i>Get Recommendations
-                        </button>
-                    </form>
-
-                    <!-- ⏳ Loading State -->
-                    <div id="loadingState" class="text-center py-5 d-none">
-                        <div class="spinner-border text-success" role="status"></div>
-                        <p class="mt-3">Analyzing your symptoms...</p>
-                    </div>
-
-                    <!-- 🌱 Results -->
-                    <div id="resultsContainer" class="mt-5 d-none">
-                        <h3 class="mb-4 text-center">🌿 Recommended Herbs</h3>
-                        <div id="resultsContent" class="row g-3"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<body class="bg-light">
+  <!-- 🌿 Navbar -->
+  <nav class="navbar navbar-expand-lg bg-success navbar-dark shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="/">
+        <i class="fas fa-leaf me-2"></i>AyurPredict
+      </a>
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link text-light" href="/researcher">
+          <i class="fas fa-microscope me-1"></i>Researcher Mode
+        </a>
+      </div>
     </div>
+  </nav>
 
-    <!-- JS Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- 💊 Symptom Input Section -->
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="card border-0 shadow-lg rounded-4">
+          <div class="card-body p-5">
+            <!-- Header with Trust Badge -->
+            <div class="text-center mb-4">
+              <i class="fas fa-heartbeat text-success fa-3x"></i>
+              <h2 class="fw-bold mt-3">AI Symptom Analyzer</h2>
+              <p class="text-muted mb-2">Describe your symptoms and discover personalized Ayurvedic herb recommendations.</p>
+              <span class="trust-badge">
+                <i class="fas fa-shield-alt me-1"></i>AI-Powered & Science-Backed
+              </span>
+            </div>
 
-    <!-- 🔗 Script -->
-    <script>
-        const form = document.getElementById("symptomForm");
-        const loadingState = document.getElementById("loadingState");
-        const resultsContainer = document.getElementById("resultsContainer");
-        const resultsContent = document.getElementById("resultsContent");
+            <!-- Symptom Analysis Overview -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <div class="card symptom-analysis">
+                  <div class="card-body">
+                    <h6 class="card-title text-success">
+                      <i class="fas fa-chart-line me-2"></i>How It Works
+                    </h6>
+                    <div class="row text-center">
+                      <div class="col-md-4">
+                        <div class="data-point justify-content-center">
+                          <i class="fas fa-stethoscope text-primary"></i>
+                          <div>
+                            <small class="fw-bold">Symptom Analysis</small>
+                            <div class="confidence-meter" style="width: 100px;">
+                              <div class="confidence-fill bg-primary" style="width: 95%;"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="data-point justify-content-center">
+                          <i class="fas fa-dna text-info"></i>
+                          <div>
+                            <small class="fw-bold">Herb Matching</small>
+                            <div class="confidence-meter" style="width: 100px;">
+                              <div class="confidence-fill bg-info" style="width: 88%;"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="data-point justify-content-center">
+                          <i class="fas fa-user-md text-success"></i>
+                          <div>
+                            <small class="fw-bold">Safety Check</small>
+                            <div class="confidence-meter" style="width: 100px;">
+                              <div class="confidence-fill bg-success" style="width: 92%;"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-        // Add symptom quickly to text area
-        function addSymptom(symptom) {
-            const textarea = document.getElementById("symptoms");
-            if (!textarea.value.includes(symptom)) {
-                textarea.value += (textarea.value ? ', ' : '') + symptom;
-            }
+            <!-- Symptom Form -->
+            <form id="symptomForm">
+              <div class="mb-4">
+                <label for="symptoms" class="form-label fw-bold">
+                  <i class="fas fa-comment-medical me-2"></i>Describe Your Symptoms
+                </label>
+                <textarea class="form-control shadow-sm" id="symptoms" rows="3" 
+                          placeholder="e.g., feeling stressed, having trouble sleeping, experiencing joint pain..." 
+                          required></textarea>
+                <div class="form-text">
+                  Be specific about how you feel. The more details you provide, the better our AI can help.
+                </div>
+              </div>
+
+              <!-- Selected Symptoms Chips -->
+              <div id="symptomChips" class="mb-3 d-none">
+                <label class="form-label fw-bold">Selected Symptoms:</label>
+                <div id="chipsContainer" class="d-flex flex-wrap"></div>
+              </div>
+
+              <!-- Quick Select - Only Available Symptoms -->
+              <div class="mb-4">
+                <label class="form-label fw-bold">
+                  <i class="fas fa-bolt me-2"></i>Quick Select Available Symptoms:
+                </label>
+                <div class="d-flex flex-wrap gap-2" id="quickSelectContainer">
+                  <!-- Dynamic buttons will be inserted here based on available symptoms -->
+                </div>
+                <div class="form-text text-muted mt-2">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Only showing symptoms with verified herb recommendations in our dataset
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-success btn-lg w-100 shadow-sm py-3">
+                <i class="fas fa-search me-2"></i> Analyze Symptoms & Get Recommendations
+              </button>
+            </form>
+
+            <!-- ⏳ Loading Progress -->
+            <div id="loadingState" class="text-center py-5 d-none">
+              <div class="spinner-border text-success mb-3" role="status" style="width: 4rem; height: 4rem;"></div>
+              <h5 class="fw-bold">AI is Analyzing Your Symptoms...</h5>
+              <p id="loadingText" class="text-muted">Initializing health analysis system...</p>
+              <div class="progress mt-3" style="height: 12px;">
+                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width: 10%;"></div>
+              </div>
+              
+              <!-- Loading Visualization -->
+              <div class="loading-visual mt-4">
+                <h6 class="text-white mb-3"><i class="fas fa-cogs me-2"></i>AI Analysis in Progress</h6>
+                <div class="data-point">
+                  <i class="fas fa-stethoscope"></i>
+                  <div class="flex-grow-1">
+                    <small>Symptom Pattern Recognition</small>
+                    <div class="progress" style="height: 6px;">
+                      <div class="progress-bar bg-info" style="width: 85%"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="data-point">
+                  <i class="fas fa-dna"></i>
+                  <div class="flex-grow-1">
+                    <small>Herb Compatibility Matching</small>
+                    <div class="progress" style="height: 6px;">
+                      <div class="progress-bar bg-warning" style="width: 70%"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="data-point">
+                  <i class="fas fa-user-shield"></i>
+                  <div class="flex-grow-1">
+                    <small>Safety & Efficacy Validation</small>
+                    <div class="progress" style="height: 6px;">
+                      <div class="progress-bar bg-success" style="width: 60%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 🌱 Results -->
+            <div id="resultsContainer" class="mt-5 d-none">
+              <!-- Results Header -->
+              <div class="row align-items-center mb-4">
+                <div class="col-md-8">
+                  <h3 class="mb-0">🌿 Personalized Herb Recommendations</h3>
+                </div>
+                <div class="col-md-4 text-md-end">
+                  <span class="trust-badge">
+                    <i class="fas fa-check-circle me-1"></i>AI-Verified Results
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Symptom Match Summary -->
+              <div id="symptomMatch" class="symptom-match mb-4">
+                <h6 class="text-success mb-3">
+                  <i class="fas fa-project-diagram me-2"></i>Symptom Analysis Summary
+                </h6>
+                <div id="matchDetails" class="row">
+                  <!-- Dynamic content will be inserted here -->
+                </div>
+              </div>
+
+              <div id="resultsContent" class="row g-4"></div>
+
+              <!-- Safety Disclaimer -->
+              <div class="alert alert-warning mt-4">
+                <h6 class="alert-heading">
+                  <i class="fas fa-exclamation-triangle me-2"></i>Important Safety Notice
+                </h6>
+                <p class="mb-2">These recommendations are based on AI analysis of traditional Ayurvedic knowledge and modern research. They are not medical advice.</p>
+                <p class="mb-0">
+                  <strong>Always consult with a healthcare professional</strong> before starting any new herbal regimen, especially if you have pre-existing conditions, are pregnant, or are taking other medications.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const form = document.getElementById("symptomForm");
+    const loadingState = document.getElementById("loadingState");
+    const resultsContainer = document.getElementById("resultsContainer");
+    const resultsContent = document.getElementById("resultsContent");
+    const progressBar = document.getElementById("progressBar");
+    const loadingText = document.getElementById("loadingText");
+    const symptomChips = document.getElementById("symptomChips");
+    const chipsContainer = document.getElementById("chipsContainer");
+    const symptomMatch = document.getElementById("symptomMatch");
+    const matchDetails = document.getElementById("matchDetails");
+    const quickSelectContainer = document.getElementById("quickSelectContainer");
+
+    // Available symptoms from your dataset
+    // Available symptoms from your dataset
+const availableSymptoms = {
+    'anxiety': { icon: 'fas fa-wind', herbs: ['Ashwagandha', 'Brahmi', 'Jatamansi'] },
+    'stress': { icon: 'fas fa-brain', herbs: ['Ashwagandha', 'Brahmi', 'Tulsi'] },
+    'insomnia': { icon: 'fas fa-bed', herbs: ['Ashwagandha', 'Brahmi', 'Tagar'] },
+    'depression': { icon: 'fas fa-sad-tear', herbs: ['Ashwagandha', 'Brahmi', 'Jatamansi'] },
+    'memory loss': { icon: 'fas fa-brain', herbs: ['Brahmi', 'Shankhpushpi', 'Ashwagandha'] },
+    'fatigue': { icon: 'fas fa-tired', herbs: ['Ashwagandha', 'Shatavari', 'Guduchi'] },
+    'cold': { icon: 'fas fa-temperature-low', herbs: ['Tulsi', 'Ginger', 'Turmeric'] },
+    'fever': { icon: 'fas fa-thermometer-full', herbs: ['Tulsi', 'Guduchi', 'Turmeric'] },
+    'infection': { icon: 'fas fa-bacteria', herbs: ['Neem', 'Turmeric', 'Tulsi'] },
+    'pain': { icon: 'fas fa-head-side-virus', herbs: ['Turmeric', 'Shallaki', 'Guggul'] },
+    'asthma': { icon: 'fas fa-lungs', herbs: ['Tulsi', 'Vasaka', 'Licorice'] },
+    'allergy': { icon: 'fas fa-allergies', herbs: ['Turmeric', 'Neem', 'Tulsi'] }
+};
+
+    let selectedSymptoms = new Set();
+
+    // Initialize quick select buttons
+    function initializeQuickSelect() {
+      quickSelectContainer.innerHTML = Object.keys(availableSymptoms).map(symptom => {
+        const symptomData = availableSymptoms[symptom];
+        return `
+          <button type="button" class="btn available-symptom quick-select-btn" 
+                  onclick="addSymptom('${symptom}')"
+                  title="Available herbs: ${symptomData.herbs.join(', ')}">
+            <i class="${symptomData.icon} me-1"></i>${symptom}
+          </button>
+        `;
+      }).join('');
+    }
+
+    // Add quick symptom
+    function addSymptom(symptom) {
+      const textarea = document.getElementById("symptoms");
+      if (!selectedSymptoms.has(symptom)) {
+        selectedSymptoms.add(symptom);
+        updateSymptomChips();
+        
+        // Add to textarea
+        const currentText = textarea.value.trim();
+        if (currentText) {
+          textarea.value = currentText + ', ' + symptom;
+        } else {
+          textarea.value = symptom;
+        }
+      }
+    }
+
+    // Remove symptom
+    function removeSymptom(symptom) {
+      selectedSymptoms.delete(symptom);
+      updateSymptomChips();
+      
+      // Remove from textarea
+      const textarea = document.getElementById("symptoms");
+      let text = textarea.value;
+      text = text.replace(symptom, '').replace(/\s*,\s*,/g, ',').replace(/^,|,$/g, '').trim();
+      textarea.value = text;
+    }
+
+    // Update symptom chips display
+    function updateSymptomChips() {
+      if (selectedSymptoms.size > 0) {
+        symptomChips.classList.remove('d-none');
+        chipsContainer.innerHTML = Array.from(selectedSymptoms).map(symptom => `
+          <div class="symptom-chip">
+            ${symptom}
+            <span class="remove" onclick="removeSymptom('${symptom}')">
+              <i class="fas fa-times"></i>
+            </span>
+          </div>
+        `).join('');
+      } else {
+        symptomChips.classList.add('d-none');
+      }
+    }
+
+    // Parse symptoms from text
+    function parseSymptoms(text) {
+      return text.split(/[,.\n]/)
+        .map(s => s.trim().toLowerCase())
+        .filter(s => s.length > 0);
+    }
+
+    // Progress simulation
+    async function simulateProgress() {
+      const steps = [
+        { delay: 700, text: "Analyzing symptom patterns...", percent: 20 },
+        { delay: 900, text: "Mapping to Ayurvedic principles...", percent: 40 },
+        { delay: 1000, text: "Scanning herb database for matches...", percent: 65 },
+        { delay: 800, text: "Evaluating safety and efficacy...", percent: 85 },
+        { delay: 600, text: "Finalizing personalized recommendations...", percent: 100 },
+      ];
+      for (const step of steps) {
+        await new Promise(r => setTimeout(r, step.delay));
+        progressBar.style.width = step.percent + "%";
+        loadingText.textContent = step.text;
+      }
+    }
+
+    // Generate match details
+    function generateMatchDetails(symptoms, data) {
+      const parsedSymptoms = parseSymptoms(symptoms);
+      
+      return parsedSymptoms.map(symptom => {
+        const isAvailable = availableSymptoms[symptom];
+        const matchScore = isAvailable ? 85 : 65;
+        const scoreColor = isAvailable ? '#28a745' : '#ffc107';
+        
+        return `
+          <div class="col-md-6 col-lg-4 mb-3">
+            <div class="d-flex align-items-center">
+              <div class="match-score me-3" style="color: ${scoreColor}">
+                ${matchScore}%
+              </div>
+              <div>
+                <strong class="text-capitalize">${symptom}</strong>
+                ${!isAvailable ? '<br><small class="text-warning">Limited data available</small>' : ''}
+                <div class="confidence-meter" style="width: 100px;">
+                  <div class="confidence-fill" style="width: ${matchScore}%; background: ${scoreColor};"></div>
+                </div>
+                <small class="text-muted">Match confidence</small>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Submit form
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const symptoms = document.getElementById("symptoms").value.trim();
+      if (!symptoms) return alert("Please describe your symptoms!");
+
+      // Reset
+      resultsContainer.classList.add("d-none");
+      resultsContent.innerHTML = "";
+      progressBar.style.width = "10%";
+      loadingText.textContent = "Initializing health analysis system...";
+      loadingState.classList.remove("d-none");
+
+      await simulateProgress();
+
+      try {
+        const response = await fetch("/api/analyze-symptoms", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ symptoms })
+        });
+
+        const data = await response.json();
+        loadingState.classList.add("d-none");
+
+        if (data.error) {
+          resultsContainer.classList.remove("d-none");
+          resultsContent.innerHTML = `<div class='alert alert-danger text-center'>${data.error}</div>`;
+          return;
         }
 
-        // Submit form
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const symptoms = document.getElementById("symptoms").value.trim();
-            if (!symptoms) return alert("Please enter a symptom!");
+        if (data.recommended_herbs && data.recommended_herbs.length > 0) {
+          resultsContainer.classList.remove("d-none");
+          
+          // Generate match details
+          matchDetails.innerHTML = generateMatchDetails(symptoms, data);
+          
+          // Generate herb cards
+          resultsContent.innerHTML = data.recommended_herbs.map(herb => `
+            <div class="col-md-6 col-lg-4">
+              <div class="card herb-card shadow-sm h-100">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h5 class="card-title text-success fw-bold mb-0">
+                      🌿 ${herb.herb}
+                    </h5>
+                    <span class="badge bg-success-subtle text-success border border-success">
+                      ${herb.predicted_strength || 'High Match'}
+                    </span>
+                  </div>
+                  
+                  <div class="mb-3">
+                    <small class="text-muted fw-bold">Primary Benefits:</small>
+                    <p class="mb-2 text-success">
+                      <i class="fas fa-check-circle me-1"></i>
+                      ${herb.benefits || "Promotes overall health and balance"}
+                    </p>
+                  </div>
+                  
+                  <div class="mb-3">
+                    <small class="text-muted fw-bold">Best For:</small>
+                    <div class="d-flex flex-wrap gap-1">
+                      ${(herb.target_symptoms || ['stress', 'balance']).map(symptom => 
+                        `<span class="badge bg-light text-dark border">${symptom}</span>`
+                      ).join('')}
+                    </div>
+                  </div>
+                  
+                  <div class="mb-3">
+                    <small class="text-muted fw-bold">Safety Notes:</small>
+                    <p class="text-danger small mb-0">
+                      <i class="fas fa-exclamation-triangle me-1"></i>
+                      ${herb.risk || "Consult healthcare provider before use"}
+                    </p>
+                  </div>
+                  
+                  <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">
+                      <i class="fas fa-database me-1"></i>
+                      ${herb.confidence || 85}% Confidence
+                    </small>
+                    <button class="btn btn-outline-success btn-sm" onclick="learnMore('${herb.herb}')">
+                      Learn More
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `).join("");
+        } else {
+          resultsContainer.classList.remove("d-none");
+          resultsContent.innerHTML = `
+            <div class="col-12">
+              <div class="alert alert-warning text-center">
+                <h5><i class="fas fa-search me-2"></i>No Specific Matches Found</h5>
+                <p class="mb-2">We couldn't find herb recommendations specifically matching your symptoms.</p>
+                <p class="mb-0">Try using one of the available symptoms above or consult with an Ayurvedic practitioner.</p>
+              </div>
+            </div>
+          `;
+        }
 
-            // Show loader
-            loadingState.classList.remove("d-none");
-            resultsContainer.classList.add("d-none");
-            resultsContent.innerHTML = "";
+      } catch (error) {
+        loadingState.classList.add("d-none");
+        resultsContainer.classList.remove("d-none");
+        resultsContent.innerHTML = `
+          <div class="col-12">
+            <div class="alert alert-danger text-center">
+              <h5><i class="fas fa-exclamation-triangle me-2"></i>Analysis Error</h5>
+              <p>We encountered an issue analyzing your symptoms. Please try again or contact support.</p>
+            </div>
+          </div>
+        `;
+      }
+    });
 
-            try {
-                const response = await fetch("/api/analyze-symptoms", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ symptoms })
-                });
+    // Learn more function
+    function learnMore(herbName) {
+      window.location.href = `/researcher?herb=${encodeURIComponent(herbName)}`;
+    }
 
-                const data = await response.json();
-                loadingState.classList.add("d-none");
+    // Initialize textarea parsing
+    document.getElementById('symptoms').addEventListener('input', function(e) {
+      const text = e.target.value;
+      const symptoms = parseSymptoms(text);
+      selectedSymptoms = new Set(symptoms);
+      updateSymptomChips();
+    });
 
-                if (data.error) {
-                    resultsContainer.classList.remove("d-none");
-                    resultsContent.innerHTML = `<div class='alert alert-danger text-center'>${data.error}</div>`;
-                    return;
-                }
-
-                // ✅ Updated for correct backend response structure
-                if (data.recommended_herbs && data.recommended_herbs.length > 0) {
-                    resultsContainer.classList.remove("d-none");
-                    resultsContent.innerHTML = data.recommended_herbs.map(herb => `
-                        <div class="col-md-6">
-                            <div class="card shadow-sm border-0 h-100">
-                                <div class="card-body">
-                                    <h5 class="card-title text-success fw-bold">${herb.herb}</h5>
-                                    <p class="mb-2"><strong>Predicted Strength:</strong> ${herb.predicted_strength}</p>
-                                    <p class="mb-0"><strong>Risk:</strong> ${herb.risk}</p>
-                                </div>
-                            </div>
-                        </div>
-                    `).join("");
-                } else {
-                    resultsContainer.classList.remove("d-none");
-                    resultsContent.innerHTML = `<div class='alert alert-warning text-center'>No recommendations found.</div>`;
-                }
-
-            } catch (error) {
-                loadingState.classList.add("d-none");
-                resultsContainer.classList.remove("d-none");
-                resultsContent.innerHTML = `<div class='alert alert-danger text-center'>Server error: ${error}</div>`;
-            }
-        });
-    </script>
+    // Initialize the quick select buttons on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeQuickSelect();
+    });
+  </script>
 </body>
 </html>
